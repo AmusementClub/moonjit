@@ -1200,7 +1200,7 @@ LJLIB_CF(string_unpack)
 
 #include "lj_libdef.h"
 
-LUALIB_API int luaopen_string(lua_State *L)
+LUALIB_API(int) luaopen_string(lua_State *L)
 {
   GCtab *mt;
   global_State *g;
@@ -1213,4 +1213,3 @@ LUALIB_API int luaopen_string(lua_State *L)
   mt->nomm = (uint8_t)(~(1u<<MM_index));
   return 1;
 }
-

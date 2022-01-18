@@ -845,7 +845,7 @@ static void ffi_register_module(lua_State *L)
   }
 }
 
-LUALIB_API int luaopen_ffi(lua_State *L)
+LUALIB_API(int) luaopen_ffi(lua_State *L)
 {
   CTState *cts = lj_ctype_init(L);
   settabV(L, L->top++, (cts->miscmap = lj_tab_new(L, 0, 1)));

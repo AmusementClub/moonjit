@@ -45,7 +45,7 @@ static TValue *cpparser(lua_State *L, lua_CFunction dummy, void *ud)
   return NULL;
 }
 
-LUA_API int lua_loadx(lua_State *L, lua_Reader reader, void *data,
+LUA_API(int) lua_loadx(lua_State *L, lua_Reader reader, void *data,
 		      const char *chunkname, const char *mode)
 {
   LexState ls;
@@ -61,7 +61,7 @@ LUA_API int lua_loadx(lua_State *L, lua_Reader reader, void *data,
   return status;
 }
 
-LUA_API int lua_load(lua_State *L, lua_Reader reader, void *data,
+LUA_API(int) lua_load(lua_State *L, lua_Reader reader, void *data,
 		     const char *chunkname)
 {
   return lua_loadx(L, reader, data, chunkname, NULL);
@@ -81,7 +81,7 @@ static const char *reader_file(lua_State *L, void *ud, size_t *size)
   return *size > 0 ? ctx->buf : NULL;
 }
 
-LUALIB_API int luaL_loadfilex(lua_State *L, const char *filename,
+LUALIB_API(int) luaL_loadfilex(lua_State *L, const char *filename,
 			      const char *mode)
 {
   FileReaderCtx ctx;
@@ -114,7 +114,7 @@ LUALIB_API int luaL_loadfilex(lua_State *L, const char *filename,
   return status;
 }
 
-LUALIB_API int luaL_loadfile(lua_State *L, const char *filename)
+LUALIB_API(int) luaL_loadfile(lua_State *L, const char *filename)
 {
   return luaL_loadfilex(L, filename, NULL);
 }
@@ -134,7 +134,7 @@ static const char *reader_string(lua_State *L, void *ud, size_t *size)
   return ctx->str;
 }
 
-LUALIB_API int luaL_loadbufferx(lua_State *L, const char *buf, size_t size,
+LUALIB_API(int) luaL_loadbufferx(lua_State *L, const char *buf, size_t size,
 				const char *name, const char *mode)
 {
   StringReaderCtx ctx;
@@ -143,20 +143,20 @@ LUALIB_API int luaL_loadbufferx(lua_State *L, const char *buf, size_t size,
   return lua_loadx(L, reader_string, &ctx, name, mode);
 }
 
-LUALIB_API int luaL_loadbuffer(lua_State *L, const char *buf, size_t size,
+LUALIB_API(int) luaL_loadbuffer(lua_State *L, const char *buf, size_t size,
 			       const char *name)
 {
   return luaL_loadbufferx(L, buf, size, name, NULL);
 }
 
-LUALIB_API int luaL_loadstring(lua_State *L, const char *s)
+LUALIB_API(int) luaL_loadstring(lua_State *L, const char *s)
 {
   return luaL_loadbuffer(L, s, strlen(s), s);
 }
 
 /* -- Dump bytecode ------------------------------------------------------- */
 
-LUA_API int lua_dump(lua_State *L, lua_Writer writer, void *data)
+LUA_API(int) lua_dump(lua_State *L, lua_Writer writer, void *data)
 {
   cTValue *o = L->top-1;
   lj_checkapi(L->top > L->base, "top slot empty");
@@ -165,4 +165,3 @@ LUA_API int lua_dump(lua_State *L, lua_Writer writer, void *data)
   else
     return 1;
 }
-

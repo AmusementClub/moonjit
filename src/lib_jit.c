@@ -675,7 +675,7 @@ static void jit_init(lua_State *L)
 }
 #endif
 
-LUALIB_API int luaopen_jit(lua_State *L)
+LUALIB_API(int) luaopen_jit(lua_State *L)
 {
 #if LJ_HASJIT
   jit_init(L);
@@ -698,4 +698,3 @@ LUALIB_API int luaopen_jit(lua_State *L)
   L->top -= 2;
   return 1;
 }
-

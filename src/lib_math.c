@@ -260,7 +260,7 @@ LJLIB_CF(math_randomseed)
 
 #include "lj_libdef.h"
 
-LUALIB_API int luaopen_math(lua_State *L)
+LUALIB_API(int) luaopen_math(lua_State *L)
 {
   RandomState *rs;
   rs = (RandomState *)lua_newuserdata(L, sizeof(RandomState));
@@ -268,4 +268,3 @@ LUALIB_API int luaopen_math(lua_State *L)
   LJ_LIB_REG(L, LUA_MATHLIBNAME, math);
   return 1;
 }
-

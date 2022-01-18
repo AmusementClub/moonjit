@@ -400,7 +400,7 @@ void lj_debug_pushloc(lua_State *L, GCproto *pt, BCPos pc)
 
 /* lua_getupvalue() and lua_setupvalue() are in lj_api.c. */
 
-LUA_API const char *lua_getlocal(lua_State *L, const lua_Debug *ar, int n)
+LUA_API(const char *) lua_getlocal(lua_State *L, const lua_Debug *ar, int n)
 {
   const char *name = NULL;
   if (ar) {
@@ -415,7 +415,7 @@ LUA_API const char *lua_getlocal(lua_State *L, const lua_Debug *ar, int n)
   return name;
 }
 
-LUA_API const char *lua_setlocal(lua_State *L, const lua_Debug *ar, int n)
+LUA_API(const char *) lua_setlocal(lua_State *L, const lua_Debug *ar, int n)
 {
   const char *name = NULL;
   TValue *o = debug_localname(L, ar, &name, (BCReg)n);
@@ -529,12 +529,12 @@ int lj_debug_getinfo(lua_State *L, const char *what, lj_Debug *ar, int ext)
   return 1;  /* Ok. */
 }
 
-LUA_API int lua_getinfo(lua_State *L, const char *what, lua_Debug *ar)
+LUA_API(int) lua_getinfo(lua_State *L, const char *what, lua_Debug *ar)
 {
   return lj_debug_getinfo(L, what, (lj_Debug *)ar, 0);
 }
 
-LUA_API int lua_getstack(lua_State *L, int level, lua_Debug *ar)
+LUA_API(int) lua_getstack(lua_State *L, int level, lua_Debug *ar)
 {
   int size;
   cTValue *frame = lj_debug_frame(L, level, &size);
@@ -656,7 +656,7 @@ void lj_debug_dumpstack(lua_State *L, SBuf *sb, const char *fmt, int depth)
 #define TRACEBACK_LEVELS1	12
 #define TRACEBACK_LEVELS2	10
 
-LUALIB_API void luaL_traceback (lua_State *L, lua_State *L1, const char *msg,
+LUALIB_API(void) luaL_traceback (lua_State *L, lua_State *L1, const char *msg,
 				int level)
 {
   int top = (int)(L->top - L->base);

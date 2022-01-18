@@ -28,7 +28,7 @@
 
 /* -- I/O error handling -------------------------------------------------- */
 
-LUALIB_API int luaL_fileresult(lua_State *L, int stat, const char *fname)
+LUALIB_API(int) luaL_fileresult(lua_State *L, int stat, const char *fname)
 {
   if (stat) {
     setboolV(L->top++, 1);
@@ -46,7 +46,7 @@ LUALIB_API int luaL_fileresult(lua_State *L, int stat, const char *fname)
   }
 }
 
-LUALIB_API int luaL_execresult(lua_State *L, int stat)
+LUALIB_API(int) luaL_execresult(lua_State *L, int stat)
 {
   if (stat != -1) {
 #if LJ_TARGET_POSIX
@@ -78,7 +78,7 @@ LUALIB_API int luaL_execresult(lua_State *L, int stat)
 
 /* -- Module registration ------------------------------------------------- */
 
-LUALIB_API const char *luaL_findtable(lua_State *L, int idx,
+LUALIB_API(const char *) luaL_findtable(lua_State *L, int idx,
 				      const char *fname, int szhint)
 {
   const char *e;
@@ -111,7 +111,7 @@ static int libsize(const luaL_Reg *l)
   return size;
 }
 
-LUALIB_API void luaL_pushmodule(lua_State *L, const char *modname, int sizehint)
+LUALIB_API(void) luaL_pushmodule(lua_State *L, const char *modname, int sizehint)
 {
   luaL_findtable(L, LUA_REGISTRYINDEX, "_LOADED", 16);
   lua_getfield(L, -1, modname);
@@ -125,7 +125,7 @@ LUALIB_API void luaL_pushmodule(lua_State *L, const char *modname, int sizehint)
   lua_remove(L, -2);  /* Remove _LOADED table. */
 }
 
-LUALIB_API void luaL_openlib(lua_State *L, const char *libname,
+LUALIB_API(void) luaL_openlib(lua_State *L, const char *libname,
 			     const luaL_Reg *l, int nup)
 {
   lj_lib_checkfpu(L);
@@ -139,13 +139,13 @@ LUALIB_API void luaL_openlib(lua_State *L, const char *libname,
     lua_pop(L, nup);  /* Remove upvalues. */
 }
 
-LUALIB_API void luaL_register(lua_State *L, const char *libname,
+LUALIB_API(void) luaL_register(lua_State *L, const char *libname,
 			      const luaL_Reg *l)
 {
   luaL_openlib(L, libname, l, 0);
 }
 
-LUALIB_API void luaL_setfuncs(lua_State *L, const luaL_Reg *l, int nup)
+LUALIB_API(void) luaL_setfuncs(lua_State *L, const luaL_Reg *l, int nup)
 {
   luaL_checkstack(L, nup, "too many upvalues");
   for (; l->name; l++) {
@@ -158,7 +158,7 @@ LUALIB_API void luaL_setfuncs(lua_State *L, const luaL_Reg *l, int nup)
   lua_pop(L, nup);  /* Remove upvalues. */
 }
 
-LUALIB_API int luaL_getsubtable(lua_State *L, int idx, const char *fname)
+LUALIB_API(int) luaL_getsubtable(lua_State *L, int idx, const char *fname)
 {
   lua_getfield(L, idx, fname);
   if (lua_istable(L, -1)) return 1;  /* table already there */
@@ -172,7 +172,7 @@ LUALIB_API int luaL_getsubtable(lua_State *L, int idx, const char *fname)
   }
 }
 
-LUALIB_API const char *luaL_gsub(lua_State *L, const char *s,
+LUALIB_API(const char *) luaL_gsub(lua_State *L, const char *s,
 				 const char *p, const char *r)
 {
   const char *wild;
@@ -223,14 +223,14 @@ static void adjuststack(luaL_Buffer *B)
   }
 }
 
-LUALIB_API char *luaL_prepbuffer(luaL_Buffer *B)
+LUALIB_API(char *) luaL_prepbuffer(luaL_Buffer *B)
 {
   if (emptybuffer(B))
     adjuststack(B);
   return B->buffer;
 }
 
-LUALIB_API void luaL_addlstring(luaL_Buffer *B, const char *s, size_t l)
+LUALIB_API(void) luaL_addlstring(luaL_Buffer *B, const char *s, size_t l)
 {
   if (l <= bufffree(B)) {
     memcpy(B->p, s, l);
@@ -243,25 +243,25 @@ LUALIB_API void luaL_addlstring(luaL_Buffer *B, const char *s, size_t l)
   }
 }
 
-LUALIB_API void luaL_addstring(luaL_Buffer *B, const char *s)
+LUALIB_API(void) luaL_addstring(luaL_Buffer *B, const char *s)
 {
   luaL_addlstring(B, s, strlen(s));
 }
 
-LUALIB_API void luaL_pushresult(luaL_Buffer *B)
+LUALIB_API(void) luaL_pushresult(luaL_Buffer *B)
 {
   emptybuffer(B);
   lua_concat(B->L, B->lvl);
   B->lvl = 1;
 }
 
-LUALIB_API void luaL_pushresultsize(luaL_Buffer *B, size_t sz)
+LUALIB_API(void) luaL_pushresultsize(luaL_Buffer *B, size_t sz)
 {
   luaL_addsize(B, sz);
   luaL_pushresult(B);
 }
 
-LUALIB_API void luaL_addvalue(luaL_Buffer *B)
+LUALIB_API(void) luaL_addvalue(luaL_Buffer *B)
 {
   lua_State *L = B->L;
   size_t vl;
@@ -278,7 +278,7 @@ LUALIB_API void luaL_addvalue(luaL_Buffer *B)
   }
 }
 
-LUALIB_API void luaL_buffinit(lua_State *L, luaL_Buffer *B)
+LUALIB_API(void) luaL_buffinit(lua_State *L, luaL_Buffer *B)
 {
   B->L = L;
   B->p = B->buffer;
@@ -293,7 +293,7 @@ LUALIB_API void luaL_buffinit(lua_State *L, luaL_Buffer *B)
 #define abs_index(L, i) \
   ((i) > 0 || (i) <= LUA_REGISTRYINDEX ? (i) : lua_gettop(L) + (i) + 1)
 
-LUALIB_API int luaL_ref(lua_State *L, int t)
+LUALIB_API(int) luaL_ref(lua_State *L, int t)
 {
   int ref;
   t = abs_index(L, t);
@@ -315,7 +315,7 @@ LUALIB_API int luaL_ref(lua_State *L, int t)
   return ref;
 }
 
-LUALIB_API void luaL_unref(lua_State *L, int t, int ref)
+LUALIB_API(void) luaL_unref(lua_State *L, int t, int ref)
 {
   if (ref >= 0) {
     t = abs_index(L, t);
@@ -356,7 +356,7 @@ static void *mem_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
   }
 }
 
-LUALIB_API lua_State *luaL_newstate(void)
+LUALIB_API(lua_State *) luaL_newstate(void)
 {
   lua_State *L = lua_newstate(mem_alloc, NULL);
   if (L) G(L)->panic = panic;
@@ -367,7 +367,7 @@ LUALIB_API lua_State *luaL_newstate(void)
 
 #include "lj_alloc.h"
 
-LUALIB_API lua_State *luaL_newstate(void)
+LUALIB_API(lua_State *) luaL_newstate(void)
 {
   lua_State *L;
   void *ud = lj_alloc_create();
@@ -382,7 +382,7 @@ LUALIB_API lua_State *luaL_newstate(void)
 }
 
 #if LJ_64 && !LJ_GC64
-LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
+LUA_API(lua_State *) lua_newstate(lua_Alloc f, void *ud)
 {
   UNUSED(f); UNUSED(ud);
   fputs("Must use luaL_newstate() for 64 bit target\n", stderr);
@@ -391,4 +391,3 @@ LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
 #endif
 
 #endif
-

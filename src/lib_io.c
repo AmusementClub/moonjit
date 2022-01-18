@@ -531,7 +531,7 @@ static GCobj *io_std_new(lua_State *L, FILE *fp, const char *name)
   return obj2gco(ud);
 }
 
-LUALIB_API int luaopen_io(lua_State *L)
+LUALIB_API(int) luaopen_io(lua_State *L)
 {
   LJ_LIB_REG(L, NULL, io_method);
   copyTV(L, L->top, L->top-1); L->top++;
@@ -542,4 +542,3 @@ LUALIB_API int luaopen_io(lua_State *L)
   io_std_new(L, stderr, "stderr");
   return 1;
 }
-

@@ -187,7 +187,7 @@ static void close_state(lua_State *L)
 #if LJ_64 && !LJ_GC64 && !(defined(LUAJIT_USE_VALGRIND) && defined(LUAJIT_USE_SYSMALLOC))
 lua_State *lj_state_newstate(lua_Alloc f, void *ud)
 #else
-LUA_API lua_State *lua_newstate(lua_Alloc f, void *ud)
+LUA_API(lua_State *) lua_newstate(lua_Alloc f, void *ud)
 #endif
 {
   GG_State *GG = (GG_State *)f(ud, NULL, 0, sizeof(GG_State));
@@ -248,7 +248,7 @@ static TValue *cpfinalize(lua_State *L, lua_CFunction dummy, void *ud)
   return NULL;
 }
 
-LUA_API void lua_close(lua_State *L)
+LUA_API(void) lua_close(lua_State *L)
 {
   global_State *g = G(L);
   int i;
@@ -308,4 +308,3 @@ void LJ_FASTCALL lj_state_free(global_State *g, lua_State *L)
   lj_mem_freevec(g, tvref(L->stack), L->stacksize, TValue);
   lj_mem_freet(g, L);
 }
-

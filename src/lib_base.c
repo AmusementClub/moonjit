@@ -700,7 +700,7 @@ static int luaopen_thread_exdata(lua_State *L)
 }
 #endif
 
-LUALIB_API int luaopen_base(lua_State *L)
+LUALIB_API(int) luaopen_base(lua_State *L)
 {
   /* NOBARRIER: Table and value are the same. */
   GCtab *env = tabref(L->env);
@@ -716,4 +716,3 @@ LUALIB_API int luaopen_base(lua_State *L)
 
   return 2;
 }
-

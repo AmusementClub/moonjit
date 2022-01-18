@@ -313,14 +313,14 @@ int luaJIT_setmode(lua_State *L, int idx, int mode)
 }
 
 /* Enforce (dynamic) linker error for version mismatches. See luajit.c. */
-LUA_API void LUAJIT_VERSION_SYM(void)
+LUA_API(void) LUAJIT_VERSION_SYM(void)
 {
 }
 
 /* -- Hooks --------------------------------------------------------------- */
 
 /* This function can be called asynchronously (e.g. during a signal). */
-LUA_API int lua_sethook(lua_State *L, lua_Hook func, int mask, int count)
+LUA_API(int) lua_sethook(lua_State *L, lua_Hook func, int mask, int count)
 {
   global_State *g = G(L);
   mask &= HOOK_EVENTMASK;
@@ -333,17 +333,17 @@ LUA_API int lua_sethook(lua_State *L, lua_Hook func, int mask, int count)
   return 1;
 }
 
-LUA_API lua_Hook lua_gethook(lua_State *L)
+LUA_API(lua_Hook) lua_gethook(lua_State *L)
 {
   return G(L)->hookf;
 }
 
-LUA_API int lua_gethookmask(lua_State *L)
+LUA_API(int) lua_gethookmask(lua_State *L)
 {
   return G(L)->hookmask & HOOK_EVENTMASK;
 }
 
-LUA_API int lua_gethookcount(lua_State *L)
+LUA_API(int) lua_gethookcount(lua_State *L)
 {
   return (int)G(L)->hookcstart;
 }
@@ -550,4 +550,3 @@ void LJ_FASTCALL lj_dispatch_profile(lua_State *L, const BCIns *pc)
   ERRNO_RESTORE
 }
 #endif
-

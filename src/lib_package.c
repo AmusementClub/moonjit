@@ -585,7 +585,7 @@ static const lua_CFunction package_loaders[] =
   NULL
 };
 
-LUALIB_API int luaopen_package(lua_State *L)
+LUALIB_API(int) luaopen_package(lua_State *L)
 {
   int i;
   int noenv;
@@ -620,4 +620,3 @@ LUALIB_API int luaopen_package(lua_State *L)
   lua_pop(L, 1);
   return 1;
 }
-

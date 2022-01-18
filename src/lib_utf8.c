@@ -14,7 +14,7 @@
 
 /* ------------------------------------------------------------------------ */
 
-LUALIB_API int luaopen_utf8(lua_State *L)
+LUALIB_API(int) luaopen_utf8(lua_State *L)
 {
   luaL_loadbufferx(L, (const char *)luaJIT_BC_utf8, luaJIT_BC_utf8_SIZE, "utf8", "b");
   lua_pcall(L, 0, 1, lua_gettop(L));
@@ -22,4 +22,3 @@ LUALIB_API int luaopen_utf8(lua_State *L)
   lua_setglobal(L, LUA_UTF8LIBNAME);
   return 1;
 }
-

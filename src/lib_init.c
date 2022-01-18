@@ -37,7 +37,7 @@ static const luaL_Reg lj_lib_preload[] = {
   { NULL,		NULL }
 };
 
-LUALIB_API void luaL_openlibs(lua_State *L)
+LUALIB_API(void) luaL_openlibs(lua_State *L)
 {
   const luaL_Reg *lib;
   for (lib = lj_lib_load; lib->func; lib++) {
@@ -53,4 +53,3 @@ LUALIB_API void luaL_openlibs(lua_State *L)
   }
   lua_pop(L, 1);
 }
-
