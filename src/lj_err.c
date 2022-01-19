@@ -428,6 +428,10 @@ typedef void *UndocumentedDispatcherContext;
 /* Another wild guess. */
 extern void __DestructExceptionObject(EXCEPTION_RECORD *rec, int nothrow);
 
+#if LJ_TARGET_WINDOWS && LJ_TARGET_X64
+const char* lj_cxxexcept_what_from_seh(const EXCEPTION_RECORD* rec);
+#endif
+
 #if LJ_TARGET_X64 && defined(MINGW_SDK_INIT)
 /* Workaround for broken MinGW64 declaration. */
 VOID RtlUnwindEx_FIXED(PVOID,PVOID,PVOID,PVOID,PVOID,PVOID) asm("RtlUnwindEx");
@@ -463,9 +467,13 @@ LJ_FUNCA int lj_err_unwind_win(EXCEPTION_RECORD *rec,
       if (rec->ExceptionCode == LJ_MSVC_EXCODE ||
 	  rec->ExceptionCode == LJ_GCC_EXCODE) {
 #if LJ_TARGET_WINDOWS
+	const char *s = NULL;
+#if LJ_TARGET_X64
+	s = lj_cxxexcept_what_from_seh(rec);
+#endif
+	setstrV(L, L->top++, s ? lj_str_newz(L, s) : lj_err_str(L, LJ_ERR_ERRCPP));
 	__DestructExceptionObject(rec, 1);
 #endif
-	setstrV(L, L->top++, lj_err_str(L, LJ_ERR_ERRCPP));
       } else if (!LJ_EXCODE_CHECK(rec->ExceptionCode)) {
 	/* Don't catch access violations etc. */
 	return 1;  /* ExceptionContinueSearch */
