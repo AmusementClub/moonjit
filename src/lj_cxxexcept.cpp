@@ -1,6 +1,5 @@
 #include <typeinfo>
 #include <exception>
-#include <iostream>
 
 // I just use marco definition in this header. Hope alright.
 #define LUA_CORE
