@@ -50,15 +50,16 @@ const char* lj_cxxexcept_what_from_seh(const EXCEPTION_RECORD* rec) {
     if (rec->NumberParameters != 4) return NULL;
     UINT_PTR magic = rec->ExceptionInformation[0];
     if (magic < 0x19930520 || magic > 0x19930522) return NULL;
-    ULONG_PTR object = rec->ExceptionInformation[1];
+    ULONG_PTR objptr = rec->ExceptionInformation[1];
     struct cxx_exception_type* info = (struct cxx_exception_type*)rec->ExceptionInformation[2];
     ULONG_PTR base = rec->ExceptionInformation[3];
     struct cxx_type_info_table* ti_table = (struct cxx_type_info_table*)(base + info->type_info_table);
     for (unsigned i = 0; i < ti_table->count; ++i) {
         struct cxx_type_info* ti_item = (struct cxx_type_info*)(base + ti_table->info[i]);
         struct type_info* ti = (struct type_info*)(base + ti_item->type_info);
+        void* object = (void*)(objptr + ti_item->offsets.this_offset);
         if (strcmp(ti->mangled + 1, "?AVexception@std@@") == 0)
-            return ((char*(*)(void*))(*(*(void***)object + 1)))((void*)object);
+            return ((char*(*)(void*))(*(*(void***)object + 1)))(object);
     }
     return NULL;
 }
