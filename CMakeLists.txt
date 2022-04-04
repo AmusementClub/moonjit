@@ -140,3 +140,7 @@ target_sources(luajit PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj")
 
 add_executable(moonjit src/luajit.c)
 target_link_libraries(moonjit PRIVATE luajit)
+
+if(MSVC)
+    target_compile_options(luajit PUBLIC /EHsc-)
+endif()
