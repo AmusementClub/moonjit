@@ -6,11 +6,41 @@ project(moonjit
     DESCRIPTION "Just-In-Time Compiler for the Lua Programming language"
 )
 
+set(DASC_FLAGS -D P64)
+
+option(LUAJIT_ENABLE_LUA52COMPAT "Enable Lua 5.2 features that might break" OFF)
+option(LUAJIT_DISABLE_FFI "Disable the FFI extension" OFF)
+option(LUAJIT_DISABLE_JIT "Disable the JIT compiler" OFF)
+option(LUAJIT_ENABLE_GC64 "Enable GC64 mode for x64" OFF)
+
+if(LUAJIT_ENABLE_LUA52COMPAT)
+    add_compile_definitions(LUAJIT_ENABLE_LUA52COMPAT)
+endif()
+if(LUAJIT_DISABLE_FFI)
+    add_compile_definitions(LUAJIT_DISABLE_FFI)
+else()
+    list(APPEND DASC_FLAGS -D FFI)
+endif()
+if(LUAJIT_DISABLE_JIT)
+    add_compile_definitions(LUAJIT_DISABLE_JIT)
+else()
+    list(APPEND DASC_FLAGS -D JIT)
+endif()
+if(LUAJIT_ENABLE_GC64)
+    add_compile_definitions(LUAJIT_ENABLE_GC64)
+endif()
+
+if(WIN32)
+    list(APPEND DASC_FLAGS -D WIN)
+endif()
+
+add_compile_definitions(LUAJIT_ENABLE_OPTIMISED_HASH=1)
+
 add_executable(luajit-minilua src/host/minilua.c)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/src/gen/buildvm_arch.h"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/src/gen"
-    COMMAND luajit-minilua ../dynasm/dynasm.lua -LN -D WIN -D JIT -D FFI -D P64 -o "${CMAKE_CURRENT_BINARY_DIR}/src/gen/buildvm_arch.h" vm_x86.dasc
+    COMMAND luajit-minilua ../dynasm/dynasm.lua -LN ${DASC_FLAGS} -o "${CMAKE_CURRENT_BINARY_DIR}/src/gen/buildvm_arch.h" vm_x86.dasc
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 add_executable(luajit-buildvm
@@ -21,7 +51,6 @@ add_executable(luajit-buildvm
     src/host/buildvm_peobj.c
     "${CMAKE_CURRENT_BINARY_DIR}/src/gen/buildvm_arch.h"
 )
-target_compile_definitions(luajit-buildvm PRIVATE LUAJIT_ENABLE_LUA52COMPAT)
 target_include_directories(luajit-buildvm PRIVATE src "${CMAKE_CURRENT_BINARY_DIR}/src/gen")
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj"
@@ -134,7 +163,7 @@ add_library(luajit SHARED
     "${CMAKE_CURRENT_BINARY_DIR}/src/gen/lj_recdef.h"
     "${CMAKE_CURRENT_BINARY_DIR}/src/gen/lj_libdef.h"
 )
-target_compile_definitions(luajit PRIVATE LUAJIT_ENABLE_LUA52COMPAT LUA_BUILD_AS_DLL)
+target_compile_definitions(luajit PRIVATE LUA_BUILD_AS_DLL)
 target_include_directories(luajit PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src/gen" PUBLIC "src")
 target_sources(luajit PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/src/lj_vm.obj")
 
@@ -142,5 +171,5 @@ add_executable(moonjit src/luajit.c)
 target_link_libraries(moonjit PRIVATE luajit)
 
 if(MSVC)
-    target_compile_options(luajit PUBLIC /EHsc-)
+    target_compile_options(luajit INTERFACE /EHsc-)
 endif()
